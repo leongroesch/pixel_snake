@@ -98,18 +98,19 @@ impl Tail {
             let new_element = head.rectangle.clone();
             self.elements.push(new_element);
             self.grow = false;
-        }
-        if self.elements.len() > 1 {
-            for i in 0..(self.elements.len() - 1) {
-                let right = self.elements[i + 1].clone();
-                let left = &mut self.elements[i];
-                left.x = right.x;
-                left.y = right.y;
+        } else {
+            if self.elements.len() > 1 {
+                for i in 0..(self.elements.len() - 1) {
+                    let right = self.elements[i + 1].clone();
+                    let left = &mut self.elements[i];
+                    left.x = right.x;
+                    left.y = right.y;
+                }
             }
-        }
-        if let Some(element) = self.elements.last_mut() {
-            element.x = head.rectangle.x;
-            element.y = head.rectangle.y;
+            if let Some(element) = self.elements.last_mut() {
+                element.x = head.rectangle.x;
+                element.y = head.rectangle.y;
+            }
         }
     }
 }
