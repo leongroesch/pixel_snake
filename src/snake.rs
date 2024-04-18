@@ -9,15 +9,62 @@ pub enum Direction {
     Right,
 }
 
-pub struct Head {
-    pub rectangle: Rectangle,
-    pub direction: Direction,
+pub struct Snake {
+    head: Head,
+    tail: Tail,
+}
+
+impl Snake {
+    pub fn new(x: u8, y: u8) -> Self {
+        Self {
+            head: Head::new(x, y),
+            tail: Tail::new(),
+        }
+    }
+
+    pub fn update(&mut self) {
+        self.head.update();
+        self.tail.update(&self.head)
+    }
+
+    pub fn grow(&mut self) {
+        self.tail.grow = true
+    }
+
+    pub fn draw(&self, frame: &mut Frame) {
+        frame.draw(&(self.head.rectangle));
+        for element in &self.tail.elements {
+            frame.draw(element);
+        }
+    }
+
+    pub fn occupies_field(&self, x: u8, y: u8) -> bool {
+        if self.head.rectangle.x == x && self.head.rectangle.y == y {
+            return true;
+        }
+        for element in &self.tail.elements {
+            if element.x == x && element.y == y {
+                return true;
+            }
+        }
+
+        false
+    }
+
+    pub fn set_direction(&mut self, direction: Direction) {
+        self.head.direction = direction;
+    }
+}
+
+struct Head {
+    rectangle: Rectangle,
+    direction: Direction,
 }
 
 impl Head {
-    pub fn new() -> Self {
+    fn new(x: u8, y: u8) -> Self {
         let rectangle = Rectangle::builder()
-            .position(1, 1)
+            .position(x, y)
             .size(1, 1)
             .color(Color::from_u32(0xFF))
             .build();
@@ -26,21 +73,32 @@ impl Head {
             direction: Direction::Right,
         }
     }
-    pub fn update(&mut self) {
+    fn update(&mut self) {
         let (mut x, mut y) = move_point((self.rectangle.x, self.rectangle.y), self.direction);
         (x, y) = move_point((x, y), self.direction);
         self.rectangle.x = x;
-        self.rectangle.y = y;        
+        self.rectangle.y = y;
     }
 }
 
-pub struct Snake {
-    pub elements: Vec<Rectangle>,
-    pub append: bool,
+pub struct Tail {
+    elements: Vec<Rectangle>,
+    grow: bool,
 }
 
-impl Snake {
-    pub fn update(&mut self, head: &Head) {
+impl Tail {
+    fn new() -> Self {
+        Self {
+            elements: Vec::new(),
+            grow: false,
+        }
+    }
+    fn update(&mut self, head: &Head) {
+        if self.grow {
+            let new_element = head.rectangle.clone();
+            self.elements.push(new_element);
+            self.grow = false;
+        }
         if self.elements.len() > 1 {
             for i in 0..(self.elements.len() - 1) {
                 let right = self.elements[i + 1].clone();
@@ -53,15 +111,10 @@ impl Snake {
             element.x = head.rectangle.x;
             element.y = head.rectangle.y;
         }
-        if self.append {
-            let new_element = head.rectangle.clone();
-            self.elements.push(new_element);
-            self.append = false;
-        }
     }
 }
 
-pub fn move_point(point: (u8, u8), direction: Direction) -> (u8, u8) {
+fn move_point(point: (u8, u8), direction: Direction) -> (u8, u8) {
     let mut result = point;
     match direction {
         Direction::Up => result.1 = if point.1 == 0 { HEIGHT } else { point.1 - 1 },

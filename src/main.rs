@@ -1,5 +1,5 @@
-mod snake;
 mod definitions;
+mod snake;
 
 use definitions::*;
 use snake::*;
@@ -9,11 +9,7 @@ use pixel_engine::prelude::*;
 fn main() {
     let mut frame = Frame::new(Color::from_u32(0x0), WIDTH, HEIGHT);
 
-    let mut head = Head::new();
-    let mut snake = Snake {
-        elements: Vec::new(),
-        append: false,
-    };
+    let mut snake = Snake::new(1, 1);
 
     let mut transmitter = Transmitter::new_retry().unwrap();
 
@@ -26,30 +22,28 @@ fn main() {
             if let Some(key) = keyboard.consume_keys().last() {
                 match key {
                     Keycode::Left => {
-                        head.direction = Direction::Left;
+                        snake.set_direction(Direction::Left);
                     }
                     Keycode::Right => {
-                        head.direction = Direction::Right;
+                        snake.set_direction(Direction::Right);
                     }
                     Keycode::Up => {
-                        head.direction = Direction::Up;
+                        snake.set_direction(Direction::Up);
                     }
                     Keycode::Down => {
-                        head.direction = Direction::Down;
+                        snake.set_direction(Direction::Down);
                     }
                     Keycode::Space => {
-                        snake.append = true;
+                        snake.grow();
                     }
                     _ => {}
                 }
             }
-            frame.clear();
-            head.update();
-            snake.update(&head);
-            frame.draw(&(head.rectangle));
-            for element in &snake.elements {
-                frame.draw(element);
             }
+            frame.clear();
+            snake.update();
+            snake.draw(&mut frame);
+
             transmitter.transmit_frame(&frame).unwrap();
         }
     }
