@@ -25,13 +25,16 @@ impl Snake {
     }
 
     pub fn update(&mut self) {
+        let old_head = self.head.rectangle.clone();
         self.head.update();
+
         let (x, y) = (self.head.rectangle.x, self.head.rectangle.y);
         if self.tail.occupies_field(x, y) {
             self.game_over = true;
+            self.head.rectangle = old_head;
             println!("Game over!");
         } else {
-            self.tail.update(&self.head)
+            self.tail.update(&old_head)
         }
     }
 
@@ -96,25 +99,29 @@ impl Tail {
             grow: false,
         }
     }
-    fn update(&mut self, head: &Head) {
-        if self.grow {
-            let new_element = head.rectangle.clone();
-            self.elements.push(new_element);
-            self.grow = false;
-        } else {
-            if self.elements.len() > 1 {
-                for i in 0..(self.elements.len() - 1) {
-                    let right = self.elements[i + 1].clone();
-                    let left = &mut self.elements[i];
-                    left.x = right.x;
-                    left.y = right.y;
-                }
+    fn update(&mut self, head: &Rectangle) {
+        if self.elements.len() < 1 {
+            if self.grow {
+                self.elements.push(head.clone());
             }
-            if let Some(element) = self.elements.last_mut() {
-                element.x = head.rectangle.x;
-                element.y = head.rectangle.y;
+        } else {
+            let old_last = self.elements.last().unwrap().clone();
+
+            for idx in (1..self.elements.len()).rev() {
+                let left = self.elements[idx - 1].clone();
+                self.elements[idx].x = left.x;
+                self.elements[idx].y = left.y;
+            }
+
+            let first = self.elements.first_mut().unwrap();
+            first.x = head.x;
+            first.y = head.y;
+
+            if self.grow {
+                self.elements.push(old_last);
             }
         }
+        self.grow = false
     }
 
     fn occupies_field(&self, x: u8, y: u8) -> bool {

@@ -22,7 +22,7 @@ fn main() {
         keyboard.update();
 
         if frame_rate.next_frame() {
-            if let Some(key) = keyboard.consume_keys().last() {
+            for key in keyboard.consume_keys() {
                 match key {
                     Keycode::Left => {
                         snake.set_direction(Direction::Left);
