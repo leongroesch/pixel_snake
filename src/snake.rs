@@ -12,6 +12,7 @@ pub enum Direction {
 pub struct Snake {
     head: Head,
     tail: Tail,
+    pub game_over: bool,
 }
 
 impl Snake {
@@ -19,12 +20,19 @@ impl Snake {
         Self {
             head: Head::new(x, y),
             tail: Tail::new(),
+            game_over: false,
         }
     }
 
     pub fn update(&mut self) {
         self.head.update();
-        self.tail.update(&self.head)
+        let (x, y) = (self.head.rectangle.x, self.head.rectangle.y);
+        if self.tail.occupies_field(x, y) {
+            self.game_over = true;
+            println!("Game over!");
+        } else {
+            self.tail.update(&self.head)
+        }
     }
 
     pub fn grow(&mut self) {
@@ -39,16 +47,7 @@ impl Snake {
     }
 
     pub fn occupies_field(&self, x: u8, y: u8) -> bool {
-        if self.head.rectangle.x == x && self.head.rectangle.y == y {
-            return true;
-        }
-        for element in &self.tail.elements {
-            if element.x == x && element.y == y {
-                return true;
-            }
-        }
-
-        false
+        self.head.occupies_field(x, y) || self.tail.occupies_field(x, y)
     }
 
     pub fn set_direction(&mut self, direction: Direction) {
@@ -78,6 +77,10 @@ impl Head {
         (x, y) = move_point((x, y), self.direction);
         self.rectangle.x = x;
         self.rectangle.y = y;
+    }
+
+    fn occupies_field(&self, x: u8, y: u8) -> bool {
+        self.rectangle.x == x && self.rectangle.y == y
     }
 }
 
@@ -112,6 +115,15 @@ impl Tail {
                 element.y = head.rectangle.y;
             }
         }
+    }
+
+    fn occupies_field(&self, x: u8, y: u8) -> bool {
+        for element in &self.elements {
+            if element.x == x && element.y == y {
+                return true;
+            }
+        }
+        false
     }
 }
 

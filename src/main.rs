@@ -6,10 +6,11 @@ use snake::*;
 
 use pixel_engine::prelude::*;
 
+const INITIAL_SNAKE_POSITION: (u8, u8) = (1, 1);
 fn main() {
     let mut frame = Frame::new(Color::from_u32(0x0), WIDTH, HEIGHT);
 
-    let mut snake = Snake::new(1, 1);
+    let mut snake = Snake::new(INITIAL_SNAKE_POSITION.0, INITIAL_SNAKE_POSITION.1);
 
     let mut transmitter = Transmitter::new_retry().unwrap();
 
@@ -36,12 +37,17 @@ fn main() {
                     Keycode::Space => {
                         snake.grow();
                     }
+                    Keycode::R => {
+                        snake = Snake::new(INITIAL_SNAKE_POSITION.0, INITIAL_SNAKE_POSITION.1);
+                    }
                     _ => {}
                 }
             }
-
             frame.clear();
-            snake.update();
+            if !snake.game_over {
+                snake.update();
+            }
+
             snake.draw(&mut frame);
 
             transmitter.transmit_frame(&frame).unwrap();
