@@ -16,7 +16,9 @@ fn main() {
 
     let mut keyboard = Keyboard::new();
     let mut frame_rate = FrameRate::new(FRAME_DELTA);
-    loop {
+
+    let mut running = true;
+    while running {
         keyboard.update();
 
         if frame_rate.next_frame() {
@@ -39,6 +41,9 @@ fn main() {
                     }
                     Keycode::R => {
                         snake = Snake::new(INITIAL_SNAKE_POSITION.0, INITIAL_SNAKE_POSITION.1);
+                    }
+                    Keycode::Escape => {
+                        running = false;
                     }
                     _ => {}
                 }
