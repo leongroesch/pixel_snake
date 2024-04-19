@@ -59,6 +59,11 @@ fn main() {
                 snake.update();
             }
 
+            let snake_head = snake.get_head_position();
+            if food_engine.try_eat_position(snake_head.0, snake_head.1) {
+                snake.grow()
+            }
+
             food_engine.draw(&mut frame);
             snake.draw(&mut frame);
 

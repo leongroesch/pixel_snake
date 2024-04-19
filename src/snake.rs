@@ -56,6 +56,10 @@ impl Snake {
     pub fn set_direction(&mut self, direction: Direction) {
         self.head.direction = direction;
     }
+
+    pub fn get_head_position(&self) -> (u8, u8) {
+        (self.head.rectangle.x, self.head.rectangle.y)
+    }
 }
 
 struct Head {

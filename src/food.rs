@@ -5,7 +5,7 @@ use pixel_engine::prelude::*;
 use rand::Rng;
 use std::time::Duration;
 
-pub struct Food {
+struct Food {
     rectangle: Rectangle,
 }
 
@@ -44,6 +44,24 @@ impl FoodEngine {
                     break;
                 }
             }
+        }
+    }
+
+    pub fn try_eat_position(&mut self, x: u8, y: u8) -> bool {
+        let mut idx = 0;
+        while idx < self.food_list.len() {
+            let food = &self.food_list[idx].rectangle;
+            if food.x == x && food.y == y {
+                break;
+            }
+            idx += 1;
+        }
+
+        if idx < self.food_list.len() {
+            self.food_list.remove(idx);
+            true
+        } else {
+            false
         }
     }
 
