@@ -39,7 +39,7 @@ fn main() {
                     _ => {}
                 }
             }
-            }
+
             frame.clear();
             snake.update();
             snake.draw(&mut frame);
