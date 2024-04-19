@@ -68,7 +68,7 @@ impl Head {
         let rectangle = Rectangle::builder()
             .position(x, y)
             .size(1, 1)
-            .color(Color::from_u32(0xFF))
+            .color(Color::from_u32(0xFF0000))
             .build();
         Self {
             rectangle,

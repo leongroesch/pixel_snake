@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 pixel_engine = {path =  "../pixel_engine" }
+rand = "0.8.5"

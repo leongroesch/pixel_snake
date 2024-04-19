@@ -1,16 +1,21 @@
 mod definitions;
+mod food;
 mod snake;
 
 use definitions::*;
+use food::*;
 use snake::*;
 
 use pixel_engine::prelude::*;
+
+use std::time::Duration;
 
 const INITIAL_SNAKE_POSITION: (u8, u8) = (1, 1);
 fn main() {
     let mut frame = Frame::new(Color::from_u32(0x0), WIDTH, HEIGHT);
 
     let mut snake = Snake::new(INITIAL_SNAKE_POSITION.0, INITIAL_SNAKE_POSITION.1);
+    let mut food_engine = FoodEngine::new(Duration::from_secs(5));
 
     let mut transmitter = Transmitter::new_retry().unwrap();
 
@@ -50,9 +55,11 @@ fn main() {
             }
             frame.clear();
             if !snake.game_over {
+                food_engine.update(&snake);
                 snake.update();
             }
 
+            food_engine.draw(&mut frame);
             snake.draw(&mut frame);
 
             transmitter.transmit_frame(&frame).unwrap();
