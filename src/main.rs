@@ -15,7 +15,7 @@ fn main() {
     let mut frame = Frame::new(Color::from_u32(0x0), WIDTH, HEIGHT);
 
     let mut snake = Snake::new(INITIAL_SNAKE_POSITION.0, INITIAL_SNAKE_POSITION.1);
-    let mut food_engine = FoodEngine::new(Duration::from_secs(5));
+    let mut food_engine = FoodEngine::new(Duration::from_secs(2));
 
     let mut transmitter = Transmitter::new_retry().unwrap();
 

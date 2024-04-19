@@ -32,7 +32,7 @@ impl Snake {
         if self.tail.occupies_field(x, y) {
             self.game_over = true;
             self.head.rectangle = old_head;
-            println!("Game over!");
+            println!("Game over!\t Score: {}", self.tail.elements.len());
         } else {
             self.tail.update(&old_head)
         }
@@ -141,11 +141,11 @@ impl Tail {
 fn move_point(point: (u8, u8), direction: Direction) -> (u8, u8) {
     let mut result = point;
     match direction {
-        Direction::Up => result.1 = if point.1 == 0 { HEIGHT } else { point.1 - 1 },
+        Direction::Up => result.1 = if point.1 == 0 { HEIGHT -1 } else { point.1 - 1 },
         Direction::Down => {
             result.1 = (point.1 + 1) % HEIGHT;
         }
-        Direction::Left => result.0 = if point.0 == 0 { WIDTH } else { point.0 - 1 },
+        Direction::Left => result.0 = if point.0 == 0 { WIDTH -1 } else { point.0 - 1 },
         Direction::Right => {
             result.0 = (result.0 + 1) % WIDTH;
         }
